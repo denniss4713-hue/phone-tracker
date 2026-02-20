@@ -612,10 +612,12 @@ function updateLocation(position) {
 }
 
 // Tab switching
-function showTab(tabName) {
+function showTab(tabName, event) {
     // Update tab buttons
     document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-    event.target.classList.add('active');
+    if (event && event.target) {
+        event.target.classList.add('active');
+    }
     
     // Show/hide content
     document.getElementById('trackTab').classList.remove('active');

@@ -1,13 +1,15 @@
-const CACHE_NAME = 'phone-tracker-v1';
+const CACHE_NAME = 'phone-tracker-v3';
+const BASE_URL = 'https://denniss4713-hue.github.io/phone-tracker/';
+
 const urlsToCache = [
-  'https://denniss4713-hue.github.io/phone-tracker/',
-  'https://denniss4713-hue.github.io/phone-tracker/index.html',
-  'https://denniss4713-hue.github.io/phone-tracker/style.css',
-  'https://denniss4713-hue.github.io/phone-tracker/script.js',
-  'https://denniss4713-hue.github.io/phone-tracker/manifest.json',
-  'https://denniss4713-hue.github.io/phone-tracker/privacy-policy.html',
-  'https://denniss4713-hue.github.io/phone-tracker/icons/icon-192.png',
-  'https://denniss4713-hue.github.io/phone-tracker/icons/icon-512.png'
+  BASE_URL,
+  BASE_URL + 'index.html',
+  BASE_URL + 'style.css',
+  BASE_URL + 'script.js',
+  BASE_URL + 'manifest.json',
+  BASE_URL + 'privacy-policy.html',
+  BASE_URL + 'icons/icon-192.png',
+  BASE_URL + 'icons/icon-512.png'
 ];
 
 // Install event - cache files

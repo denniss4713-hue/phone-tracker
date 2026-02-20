@@ -205,7 +205,7 @@ button:hover {
     display: none;
 }
 
-.tracking-result.show {
+.tracking-result.show, #result.show {
     display: block;
     animation: fadeIn 0.5s;
 }
