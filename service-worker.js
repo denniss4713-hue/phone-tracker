@@ -1,13 +1,13 @@
 const CACHE_NAME = 'phone-tracker-v1';
 const urlsToCache = [
-  '/phone-tracker/',
-  '/phone-tracker/index.html',
-  '/phone-tracker/style.css',
-  '/phone-tracker/script.js',
-  '/phone-tracker/manifest.json',
-  '/phone-tracker/privacy-policy.html',
-  '/phone-tracker/icons/icon-192.png',
-  '/phone-tracker/icons/icon-512.png'
+  'https://denniss4713-hue.github.io/phone-tracker/',
+  'https://denniss4713-hue.github.io/phone-tracker/index.html',
+  'https://denniss4713-hue.github.io/phone-tracker/style.css',
+  'https://denniss4713-hue.github.io/phone-tracker/script.js',
+  'https://denniss4713-hue.github.io/phone-tracker/manifest.json',
+  'https://denniss4713-hue.github.io/phone-tracker/privacy-policy.html',
+  'https://denniss4713-hue.github.io/phone-tracker/icons/icon-192.png',
+  'https://denniss4713-hue.github.io/phone-tracker/icons/icon-512.png'
 ];
 
 // Install event - cache files
