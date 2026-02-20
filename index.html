@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#00d4ff">
+    <meta name="description" content="Real-time GPS location tracking app with phone number lookup">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="PhoneTracker">
+    <meta name="application-name" content="Phone GPS Tracker">
+    <meta name="msapplication-TileColor" content="#0f0c29">
+    <meta name="msapplication-config" content="none">
+    
+    <title>Phone GPS Tracker - Real Time</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="icons/icon-512.png">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>📱 Phone GPS Tracker</h1>
+        
+        <div class="tabs">
+            <button class="tab active" onclick="showTab('lookup')">📞 Number Lookup</button>
+            <button class="tab" onclick="showTab('track')">📍 Track Device</button>
+            <button class="tab" onclick="showTab('share')">📤 Share Location</button>
+        </div>
+        
+        <!-- Lookup Tab -->
+        <div id="lookupTab" class="tab-content active">
+            <div class="box">
+                <h3>Find Phone Number Location</h3>
+                <p class="info-text">Enter any phone number to see its approximate location based on country code:</p>
+                
+                <input type="tel" id="phoneInput" placeholder="Enter Phone Number (+1, +91, +44...)">
+                <button onclick="lookupPhoneNumber()">LOOKUP LOCATION</button>
+            </div>
+            
+            <div id="result">
+                <div class="status connecting" id="statusBox">🔄 Enter a phone number to lookup</div>
+                
+                <div class="phone-display" id="phoneDisplay"></div>
+                
+                <div class="location-display" id="locationDisplay">📍 Waiting for input...</div>
+                
+                <div class="coordinates">
+                    <div><span>LATITUDE</span><strong id="lat">--</strong></div>
+                    <div><span>LONGITUDE</span><strong id="lng">--</strong></div>
+                    <div><span>ACCURACY</span><strong id="acc">--</strong></div>
+                    <div><span>STATUS</span><strong id="status">--</strong></div>
+                </div>
+                
+                <div class="map" id="mapBox"></div>
+                
+                <div class="info">
+                    ℹ️ This shows the country/city associated with the phone number's country code. Not real-time GPS.
+                </div>
+            </div>
+        </div>
+        
+        <!-- Track Tab -->
+        <div id="trackTab" class="tab-content">
+            <div class="box">
+                <h3>Registered Devices</h3>
+                <div id="deviceList" class="device-list">
+                    <p class="loading">Connecting to server...</p>
+                </div>
+            </div>
+            
+            <div id="trackingResult" class="tracking-result">
+                <div class="status connecting" id="statusBox2">Select a device to track</div>
+                
+                <div class="phone-display" id="phoneDisplay2"></div>
+                
+                <div class="location-display" id="locationDisplay2">📍 Waiting for location...</div>
+                
+                <div class="coordinates">
+                    <div><span>LATITUDE</span><strong id="lat2">--</strong></div>
+                    <div><span>LONGITUDE</span><strong id="lng2">--</strong></div>
+                    <div><span>ACCURACY</span><strong id="acc2">--</strong></div>
+                    <div><span>STATUS</span><strong id="status2">Offline</strong></div>
+                </div>
+                
+                <div class="map" id="mapBox2"></div>
+                
+                <div class="info">
+                    📱 The target phone must have "Share Location" tab open to send GPS data.
+                </div>
+            </div>
+        </div>
+        
+        <!-- Share Location Tab -->
+        <div id="shareTab" class="tab-content">
+            <div class="box">
+                <h3>Share Your Location</h3>
+                <p class="info-text">Enter your details to allow real-time tracking:</p>
+                
+                <input type="text" id="myName" placeholder="Your Name">
+                <input type="tel" id="myPhone" placeholder="Phone Number (+1, +91...)">
+                <button onclick="registerDevice()">START SHARING LOCATION</button>
+                
+                <div id="shareStatus" class="status-message"></div>
+            </div>
+            
+            <div id="sharingActive" class="sharing-active">
+                <div class="status success">✅ Sharing your location in real-time</div>
+                <div class="coordinates">
+                    <div><span>LATITUDE</span><strong id="myLat">--</strong></div>
+                    <div><span>LONGITUDE</span><strong id="myLng">--</strong></div>
+                    <div><span>ACCURACY</span><strong id="myAcc">--</strong></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    
+    <!-- Privacy Policy Link -->
+    <div style="text-align: center; margin-top: 20px; padding: 15px;">
+        <a href="privacy-policy.html" style="color: #00d4ff; font-size: 14px; text-decoration: none;">Privacy Policy</a>
+    </div>
+</body>
+</html>
+
