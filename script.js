@@ -222,6 +222,12 @@ var pollInterval = null;
 var devices = [];
 var API_URL = ''; // Local-only mode - no server needed
 
+// Leaflet map instances
+var lookupMap = null;
+var trackingMap = null;
+var lookupMarker = null;
+var trackingMarker = null;
+
 // Service Worker Registration for PWA
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
@@ -379,42 +385,53 @@ function lookupPhoneNumber() {
         return;
     }
     
-    var countryData = getCountryFromPhone(phone);
-    
-    // Show result
+    // Show loading state
     document.getElementById('result').classList.add('show');
     document.getElementById('phoneDisplay').textContent = phone;
+    document.getElementById('statusBox').className = 'status connecting';
+    document.getElementById('statusBox').textContent = '🔄 Searching...';
+    document.getElementById('locationDisplay').textContent = '📍 Looking up location...';
+    document.getElementById('lat').textContent = '--';
+    document.getElementById('lng').textContent = '--';
+    document.getElementById('acc').textContent = '--';
+    document.getElementById('status').textContent = 'Searching...';
+    clearLookupMap();
     
-    if (countryData) {
-        // Get first city as default
-        var city = countryData.cities[0];
+    // Add slight delay for better UX
+    setTimeout(function() {
+        var countryData = getCountryFromPhone(phone);
         
-        document.getElementById('statusBox').className = 'status success';
-        document.getElementById('statusBox').textContent = '✅ Phone number location found!';
-        
-        document.getElementById('locationDisplay').textContent = '📍 ' + city.n + ', ' + countryData.name;
-        
-        document.getElementById('lat').textContent = city.la.toFixed(6) + '°';
-        document.getElementById('lng').textContent = city.lo.toFixed(6) + '°';
-        document.getElementById('acc').textContent = '~100km';
-        document.getElementById('status').textContent = '● ESTIMATED';
-        
-        // Show on map
-        document.getElementById('mapBox').innerHTML = 
-            '<iframe src="https://www.google.com/maps?q=' + city.la + ',' + city.lo + '&z=8&output=embed"></iframe>';
-    } else {
-        document.getElementById('statusBox').className = 'status error';
-        document.getElementById('statusBox').textContent = '⚠️ Unknown location';
-        
-        document.getElementById('locationDisplay').textContent = '📍 Unknown location';
-        
-        document.getElementById('lat').textContent = '--';
-        document.getElementById('lng').textContent = '--';
-        document.getElementById('acc').textContent = '--';
-        document.getElementById('status').textContent = 'Unknown';
-        
-        document.getElementById('mapBox').innerHTML = '';
-    }
+        if (countryData) {
+            // Get first city as default
+            var city = countryData.cities[0];
+            
+            document.getElementById('statusBox').className = 'status success';
+            document.getElementById('statusBox').textContent = '✅ Phone number location found!';
+            
+            document.getElementById('locationDisplay').textContent = '📍 ' + city.n + ', ' + countryData.name;
+            
+            document.getElementById('lat').textContent = city.la.toFixed(6) + '°';
+            document.getElementById('lng').textContent = city.lo.toFixed(6) + '°';
+            document.getElementById('acc').textContent = '~100km';
+            document.getElementById('status').textContent = '● ESTIMATED';
+            
+            // Show on map using Leaflet (OpenStreetMap)
+            showLookupMap(city.la, city.lo, city.n + ', ' + countryData.name);
+        } else {
+            document.getElementById('statusBox').className = 'status error';
+            document.getElementById('statusBox').textContent = '⚠️ Unknown location';
+            
+            document.getElementById('locationDisplay').textContent = '📍 Unknown location';
+            
+            document.getElementById('lat').textContent = '--';
+            document.getElementById('lng').textContent = '--';
+            document.getElementById('acc').textContent = '--';
+            document.getElementById('status').textContent = 'Unknown';
+            
+            // Clear the map
+            clearLookupMap();
+        }
+    }, 10000); // 10 second delay for better UX
 }
 
 // Display device list
@@ -478,7 +495,9 @@ function selectDevice(deviceId) {
         document.getElementById('lng').textContent = '--';
         document.getElementById('acc').textContent = '--';
         document.getElementById('status').textContent = 'Searching...';
-        document.getElementById('mapBox').innerHTML = '';
+        
+        // Clear the tracking map
+        clearTrackingMap();
     }
 }
 
@@ -498,9 +517,8 @@ function displayTrackedLocation(device) {
     document.getElementById('acc').textContent = '±' + Math.round(location.accuracy) + 'm';
     document.getElementById('status').textContent = '● LIVE';
     
-    // Update map
-    document.getElementById('mapBox').innerHTML = 
-        '<iframe src="https://www.google.com/maps?q=' + location.lat + ',' + location.lng + '&z=16&output=embed"></iframe>';
+    // Update map using Leaflet (OpenStreetMap)
+    showTrackingMap(location.lat, location.lng, device.name || device.phoneNumber);
 }
 
 // Register device to share location (local mode)
@@ -640,4 +658,96 @@ window.onbeforeunload = function() {
         clearInterval(pollInterval);
     }
 };
+
+// ============================================
+// Leaflet Map Functions (OpenStreetMap)
+// ============================================
+
+// Show location on lookup map
+function showLookupMap(lat, lng, title) {
+    const mapContainer = document.getElementById('mapBox');
+    
+    // If map already exists, remove it first
+    if (lookupMap) {
+        lookupMap.remove();
+        lookupMap = null;
+    }
+    
+    // Clear container and initialize Leaflet map
+    mapContainer.innerHTML = '';
+    mapContainer.style.height = '300px';
+    
+    lookupMap = L.map('mapBox', { zoomControl: true }).setView([lat, lng], 8);
+    
+    // Add OpenStreetMap tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19
+    }).addTo(lookupMap);
+    
+    // Add marker
+    lookupMarker = L.marker([lat, lng]).addTo(lookupMap)
+        .bindPopup(title || 'Location')
+        .openPopup();
+}
+
+// Clear lookup map
+function clearLookupMap() {
+    if (lookupMap) {
+        lookupMap.remove();
+        lookupMap = null;
+        lookupMarker = null;
+    }
+    const mapContainer = document.getElementById('mapBox');
+    mapContainer.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#666;">No location data</div>';
+}
+
+// Show location on tracking map
+function showTrackingMap(lat, lng, title) {
+    const mapContainer = document.getElementById('mapBox2');
+    
+    // If map already exists, just update view
+    if (trackingMap) {
+        trackingMap.setView([lat, lng], 16);
+        
+        // Update marker position
+        if (trackingMarker) {
+            trackingMarker.setLatLng([lat, lng]);
+            trackingMarker.setPopupContent(title || 'Device Location');
+        } else {
+            trackingMarker = L.marker([lat, lng]).addTo(trackingMap)
+                .bindPopup(title || 'Device Location')
+                .openPopup();
+        }
+        return;
+    }
+    
+    // Clear container and initialize Leaflet map
+    mapContainer.innerHTML = '';
+    mapContainer.style.height = '300px';
+    
+    trackingMap = L.map('mapBox2', { zoomControl: true }).setView([lat, lng], 16);
+    
+    // Add OpenStreetMap tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19
+    }).addTo(trackingMap);
+    
+    // Add marker
+    trackingMarker = L.marker([lat, lng]).addTo(trackingMap)
+        .bindPopup(title || 'Device Location')
+        .openPopup();
+}
+
+// Clear tracking map
+function clearTrackingMap() {
+    if (trackingMap) {
+        trackingMap.remove();
+        trackingMap = null;
+        trackingMarker = null;
+    }
+    const mapContainer = document.getElementById('mapBox2');
+    mapContainer.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#666;">Waiting for location...</div>';
+}
 

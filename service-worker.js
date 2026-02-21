@@ -1,19 +1,23 @@
-const CACHE_NAME = 'phone-tracker-v3';
-const BASE_URL = 'https://denniss4713-hue.github.io/phone-tracker/';
+const CACHE_NAME = 'phone-tracker-v7';
 
+// Use absolute paths for PWA Builder compatibility
+const BASE_URL = 'https://phone-tracker-p4sz.vercel.app';
 const urlsToCache = [
-  BASE_URL,
-  BASE_URL + 'index.html',
-  BASE_URL + 'style.css',
-  BASE_URL + 'script.js',
-  BASE_URL + 'manifest.json',
-  BASE_URL + 'privacy-policy.html',
-  BASE_URL + 'icons/icon-192.png',
-  BASE_URL + 'icons/icon-512.png'
+  BASE_URL + '/',
+  BASE_URL + '/index.html',
+  BASE_URL + '/style.css',
+  BASE_URL + '/script.js',
+  BASE_URL + '/manifest.json',
+  BASE_URL + '/privacy-policy.html',
+  BASE_URL + '/icons/icon-192.png',
+  BASE_URL + '/icons/icon-512.png'
 ];
 
 // Install event - cache files
 self.addEventListener('install', event => {
+  // Skip waiting - activate immediately
+  self.skipWaiting();
+  
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
@@ -62,8 +66,11 @@ self.addEventListener('fetch', event => {
 
 // Activate event - clean up old caches
 self.addEventListener('activate', event => {
+  // Claim clients immediately
   event.waitUntil(
-    caches.keys().then(cacheNames => {
+    clients.claim().then(() => {
+      return caches.keys();
+    }).then(cacheNames => {
       return Promise.all(
         cacheNames.map(cacheName => {
           if (cacheName !== CACHE_NAME) {

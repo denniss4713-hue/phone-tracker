@@ -8,21 +8,24 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="PhoneTracker">
-    <meta name="application-name" content="Phone GPS Tracker">
+    <meta name="apple-mobile-web-app-title" content="Phone GPS Tracking">
+    <meta name="application-name" content="Phone GPS Tracking">
     <meta name="msapplication-TileColor" content="#0f0c29">
     <meta name="msapplication-config" content="none">
     
-    <title>Phone GPS Tracker - Real Time</title>
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/png" sizes="192x192" href="https://denniss4713-hue.github.io/phone-tracker/icons/icon-192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="https://denniss4713-hue.github.io/phone-tracker/icons/icon-512.png">
-    <link rel="apple-touch-icon" href="https://denniss4713-hue.github.io/phone-tracker/icons/icon-192.png">
+    <title>Phone GPS Tracking - Real Time</title>
+    <link rel="manifest" href="https://phone-tracker-p4sz.vercel.app/manifest.json">
+    <link rel="icon" type="image/png" sizes="192x192" href="https://phone-tracker-p4sz.vercel.app/icons/icon-192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="https://phone-tracker-p4sz.vercel.app/icons/icon-512.png">
+    <link rel="apple-touch-icon" href="https://phone-tracker-p4sz.vercel.app/icons/icon-192.png">
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Leaflet CSS for OpenStreetMap (free, no API key required) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 </head>
 <body>
     <div class="container">
-        <h1>📱 Phone GPS Tracker</h1>
+        <h1>📱 Phone GPS Tracking</h1>
         
         <div class="tabs">
             <button class="tab active" onclick="showTab('lookup')">📞 Number Lookup</button>
@@ -117,6 +120,9 @@
         </div>
     </div>
 
+    <!-- Leaflet JS for OpenStreetMap (free, no API key required) -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
     <script src="script.js"></script>
     
     <!-- Privacy Policy Link -->
